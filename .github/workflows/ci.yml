@@ -1,0 +1,29 @@
+name: Gateway CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Compilar Gateway
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - name: Descargar dependencias
+        run: go mod download
+
+      - name: Compilar gateway
+        run: go build -o gateway ./cmd/gateway
+
+      - name: Verificar que compila sin errores
+        run: go vet ./...
