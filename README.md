@@ -116,10 +116,5 @@ Negligent use or off‑chain ledger tampering by third parties does not exempt t
 Built in the bunker of Corrientes, Argentina, on top of the web5-mesh IAON infrastructure.
 Made with pride and endurance – without asking for permission.
 
-<div align="center">
-
 **La internet donde los nodos son dueños de sus propias rutas.**
-
 Hecho con orgullo y aguante desde Corrientes, Argentina.
-
-</div>
