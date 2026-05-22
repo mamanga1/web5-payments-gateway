@@ -66,7 +66,7 @@ func NewIdentity(name string) (*Identity, error) {
 	}, nil
 }
 
-// Sign firma datos usando la clave privada ECDSA
+// Sign firma datos usando la clave privada secp256k1
 func (id *Identity) Sign(data []byte) ([]byte, error) {
 	if id.PrivateKey == nil {
 		return nil, fmt.Errorf("no private key available")
@@ -90,6 +90,7 @@ func (id *Identity) Verify(data []byte, signature []byte) bool {
 	hash := sha256.Sum256(data)
 	var sig secp256k1.Signature
 	if err := sig.ParseDERSignature(signature); err != nil {
+		// Si falla, intentar formato [R||S]
 		var r, s [32]byte
 		copy(r[:], signature[:32])
 		copy(s[:], signature[32:64])
