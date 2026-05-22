@@ -15,7 +15,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/mamanga1/web5-payments-gateway/internal/crypto"
 	"github.com/mamanga1/web5-payments-gateway/internal/payout"
 )
 
