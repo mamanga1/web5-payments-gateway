@@ -15,9 +15,9 @@ import (
 	"syscall"
 	"time"
 
-	"web5-payments-gateway/internal/crypto"
-	"web5-payments-gateway/internal/mesh"
-	"web5-payments-gateway/internal/payout"
+	"github.com/mamanga1/web5-payments-gateway/internal/crypto"
+	"github.com/mamanga1/web5-payments-gateway/internal/mesh"
+	"github.com/mamanga1/web5-payments-gateway/internal/payout"
 )
 
 func main() {
