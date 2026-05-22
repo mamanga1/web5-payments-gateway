@@ -1,16 +1,19 @@
 // ============================================================================
-// internal/crypto/identity.go - DID + secp256k1
+// internal/crypto/identity.go - DID + ECDSA (estándar de Go)
 // ============================================================================
 
 package crypto
 
 import (
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"math/big"
 	"time"
 
-	"github.com/decred/dcrd/dcrec/secp256k1/v4"
 	"github.com/mr-tron/base58"
 )
 
@@ -25,8 +28,8 @@ func (d *DID) String() string {
 
 type Identity struct {
 	DID            *DID
-	PrivateKey     *secp256k1.PrivateKey
-	PublicKey      *secp256k1.PublicKey
+	PrivateKey     *ecdsa.PrivateKey
+	PublicKey      *ecdsa.PublicKey
 	Name           string
 	CreatedAt      time.Time
 	LastSeen       time.Time
@@ -35,13 +38,13 @@ type Identity struct {
 }
 
 func NewIdentity(name string) (*Identity, error) {
-	privKey, err := secp256k1.GeneratePrivateKey()
+	privKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate private key: %w", err)
 	}
-	pubKey := privKey.PubKey()
-	pubKeyCompressed := pubKey.SerializeCompressed()
-	hash := sha256.Sum256(pubKeyCompressed)
+	pubKey := &privKey.PublicKey
+	pubKeyBytes := elliptic.Marshal(elliptic.P256(), pubKey.X, pubKey.Y)
+	hash := sha256.Sum256(pubKeyBytes)
 	did := &DID{
 		Method: "did:web5-mesh",
 		Hash:   hash[:],
@@ -55,7 +58,7 @@ func NewIdentity(name string) (*Identity, error) {
 		CreatedAt:      now,
 		LastSeen:       now,
 		Reputation:     100,
-		SignatureCurve: "secp256k1",
+		SignatureCurve: "P-256",
 	}, nil
 }
 
@@ -64,11 +67,12 @@ func (id *Identity) Sign(data []byte) ([]byte, error) {
 		return nil, fmt.Errorf("no private key available")
 	}
 	hash := sha256.Sum256(data)
-	signature, err := id.PrivateKey.Sign(hash[:])
+	r, s, err := ecdsa.Sign(rand.Reader, id.PrivateKey, hash[:])
 	if err != nil {
 		return nil, fmt.Errorf("signing failed: %w", err)
 	}
-	return signature.Serialize(), nil
+	signature := append(r.Bytes(), s.Bytes()...)
+	return signature, nil
 }
 
 func (id *Identity) Verify(data []byte, signature []byte) bool {
@@ -79,13 +83,9 @@ func (id *Identity) Verify(data []byte, signature []byte) bool {
 		return false
 	}
 	hash := sha256.Sum256(data)
-	// Parsear firma manualmente (R || S)
-	var r, s [32]byte
-	copy(r[:], signature[:32])
-	copy(s[:], signature[32:64])
-	var sig secp256k1.Signature
-	sig.SetRS(r, s)
-	return sig.Verify(hash[:], id.PublicKey)
+	r := new(big.Int).SetBytes(signature[:32])
+	s := new(big.Int).SetBytes(signature[32:64])
+	return ecdsa.Verify(id.PublicKey, hash[:], r, s)
 }
 
 func (id *Identity) GetDIDString() string {
@@ -93,5 +93,6 @@ func (id *Identity) GetDIDString() string {
 }
 
 func (id *Identity) GetPublicKeyHex() string {
-	return hex.EncodeToString(id.PublicKey.SerializeCompressed())
+	pubKeyBytes := elliptic.Marshal(elliptic.P256(), id.PublicKey.X, id.PublicKey.Y)
+	return hex.EncodeToString(pubKeyBytes)
 }
