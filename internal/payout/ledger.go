@@ -9,7 +9,6 @@ package payout
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"sync"
