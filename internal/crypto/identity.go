@@ -79,10 +79,12 @@ func (id *Identity) Verify(data []byte, signature []byte) bool {
 		return false
 	}
 	hash := sha256.Sum256(data)
-	sig, err := secp256k1.ParseSignature(signature)
-	if err != nil {
-		return false
-	}
+	// Parsear firma manualmente (R || S)
+	var r, s [32]byte
+	copy(r[:], signature[:32])
+	copy(s[:], signature[32:64])
+	var sig secp256k1.Signature
+	sig.SetRS(r, s)
 	return sig.Verify(hash[:], id.PublicKey)
 }
 
