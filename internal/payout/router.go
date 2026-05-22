@@ -8,11 +8,9 @@
 package payout
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
-	"sync"
-	"time"
+	"sync"	
 )
 
 // PaymentEvent representa un pago confirmado desde un Bridge Node externo
