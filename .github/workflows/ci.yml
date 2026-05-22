@@ -19,8 +19,10 @@ jobs:
         with:
           go-version: '1.23'
 
-      - name: Descargar dependencias
-        run: go mod download
+      - name: Generar go.sum y descargar dependencias
+        run: |
+          go mod tidy
+          go mod download
 
       - name: Compilar gateway
         run: go build -o gateway ./cmd/gateway
