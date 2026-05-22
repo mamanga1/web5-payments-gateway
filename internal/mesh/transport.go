@@ -15,8 +15,8 @@ import (
 	"sync"
 	"time"
 
-	"web5-payments-gateway/internal/crypto"
-	"web5-payments-gateway/internal/payout"
+	"github.com/mamanga1/web5-payments-gateway/internal/crypto"
+	"github.com/mamanga1/web5-payments-gateway/internal/payout"
 )
 
 // Transport maneja la comunicación UDP con la malla
