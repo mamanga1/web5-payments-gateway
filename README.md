@@ -108,15 +108,3 @@ Negligent use or off‑chain ledger tampering by third parties does not exempt t
 Built in the bunker of Corrientes, Argentina, on top of the web5-mesh IAON infrastructure.
 Made with pride and endurance – without asking for permission.
 
-
----
-
-### Paso 5: Bajá hasta abajo y hacé clic en **"Commit changes"**
-
----
-
-## ✅ Después de eso, el README ya va a estar profesional
-
-Los otros archivos (`LICENSE-TRINCHERA`, `go.mod`, el código) los vamos subiendo después, **sin apuro**.
-
----
